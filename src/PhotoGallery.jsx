@@ -1,4 +1,6 @@
 import React from "react";
+import PropTypes from 'prop-types';
+
 import Slot from "./Slot";
 import { Next, Prev } from "./Arrows";
 import styled from "styled-components";
@@ -43,7 +45,6 @@ class PhotoGallery extends React.Component {
     handleSwipeEnd = (e) => {
         const clientX = e?.changedTouches?.[0].clientX ?? e.clientX;
         const diff = clientX - this.state.x;
-        console.log(diff)
 
         if (Math.abs(diff) > 100) {
             if (diff > 0) {
@@ -55,7 +56,8 @@ class PhotoGallery extends React.Component {
         this.setState({ x: -1 })
     }
     handleNext = () => {
-        if (this.state.selected === this.props.images.length - 1) {
+        const length = this.props.images?.length ?? 0;
+        if (this.state.selected >= length - 1) {
             return
         }
         this.setState((prevState) => ({ selected: prevState.selected + 1 }))
@@ -70,20 +72,27 @@ class PhotoGallery extends React.Component {
     render() {
         const images = this.props.images;
         const selected = this.state.selected;
-        const current = images[selected];
+        const current = images?.[selected] ?? {};
+        const length = images?.length ?? 0;
 
         return (
             <Container onMouseDown={this.handleSwipeStart} onMouseUp={this.handleSwipeEnd} onTouchStart={this.handleSwipeStart} onTouchEnd={this.handleSwipeEnd}>
                 <Slot image={current}>
                     <Prev onClick={this.handlePrev} disabled={selected === 0} />
-                    <Next onClick={this.handleNext} disabled={selected === images.length - 1} />
+                    <Next onClick={this.handleNext} disabled={selected >= length - 1} />
                 </Slot>
-                <Caption>
+                { !!current.caption && <Caption>
                     {current.caption}
-                </Caption>
+                </Caption>}
             </Container>
         )
     }
 }
+PhotoGallery.defaultProps = {
+    images: []
+};
 
+PhotoGallery.propTypes = {
+    images: PropTypes.array
+};
 export default PhotoGallery;
