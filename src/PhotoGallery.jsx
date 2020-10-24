@@ -31,7 +31,28 @@ const Caption = styled.div`
 class PhotoGallery extends React.Component {
     constructor() {
         super();
-        this.state = { selected: 0 };
+        this.state = { selected: 0, x: -1 };
+    }
+    handleSwipeStart = (e) => {
+        const clientX = e?.changedTouches?.[0].clientX ?? e.clientX;
+        if (this.state.x > 0) {
+            return;
+        }
+        this.setState({ x: clientX })
+    }
+    handleSwipeEnd = (e) => {
+        const clientX = e?.changedTouches?.[0].clientX ?? e.clientX;
+        const diff = clientX - this.state.x;
+        console.log(diff)
+
+        if (Math.abs(diff) > 100) {
+            if (diff > 0) {
+                this.handlePrev()
+            } else {
+                this.handleNext()
+            }
+        }
+        this.setState({ x: -1 })
     }
     handleNext = () => {
         if (this.state.selected === this.props.images.length - 1) {
@@ -52,10 +73,10 @@ class PhotoGallery extends React.Component {
         const current = images[selected];
 
         return (
-            <Container>
+            <Container onMouseDown={this.handleSwipeStart} onMouseUp={this.handleSwipeEnd} onTouchStart={this.handleSwipeStart} onTouchEnd={this.handleSwipeEnd}>
                 <Slot image={current}>
-                    <Prev onClick={this.handlePrev} disabled={selected===0} />
-                    <Next onClick={this.handleNext} disabled={selected===images.length-1} />
+                    <Prev onClick={this.handlePrev} disabled={selected === 0} />
+                    <Next onClick={this.handleNext} disabled={selected === images.length - 1} />
                 </Slot>
                 <Caption>
                     {current.caption}
