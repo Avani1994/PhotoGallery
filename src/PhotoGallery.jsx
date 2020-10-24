@@ -1,30 +1,32 @@
 import React from "react";
 import Slot from "./Slot";
-import { styled } from "./stitches.config";
+import { Next, Prev } from "./Arrows";
+import styled from "styled-components";
 
-const Container = styled("div", {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "flex-end",
-    alignItems: "center",
-    position: "relative",
-    height: "300px",
-    width: "400px"
-})
-const Caption = styled("div", {
-    fontSize: "1em",
-    color: "white",
-    fontWeight: 500,
-    textAlign: "center",
-    padding: "5px",
-    zIndex: 1,
-    marginBottom: "10px",
-    background: "rgba(0,0,0,0.2)",
-    paddingLeft: "15px",
-    paddingRight: "15px",
-    borderRadius: "5px",
-    lineHeight: "1",
-})
+const Container = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    position: relative;
+    height: 300px;
+    width: 400px;
+    box-sizing: border-box;
+`
+const Caption = styled.div`
+    font-size: 1em;
+    color: white;
+    font-weight: 500;
+    text-align: center;
+    padding: 5px;
+    z-index: 1;
+    margin-bottom: 10px;
+    background: rgba(0,0,0,0.2);
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: 5px;
+    line-height: 1;
+`
 
 class PhotoGallery extends React.Component {
     constructor() {
@@ -50,8 +52,11 @@ class PhotoGallery extends React.Component {
         const current = images[selected];
 
         return (
-            <Container onClick={this.handleNext}>
-                <Slot image={current} />
+            <Container>
+                <Slot image={current}>
+                    <Prev onClick={this.handlePrev} disabled={selected===0} />
+                    <Next onClick={this.handleNext} disabled={selected===images.length-1} />
+                </Slot>
                 <Caption>
                     {current.caption}
                 </Caption>
